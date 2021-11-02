@@ -1,0 +1,10 @@
+This aims to be a service that offers good relevant news on broad topics of the user's choice.
+A User would imput what they are interested in and the sourcers will look for such content. 
+Why? 
+1. to have one place for all the news (i generally like that, hate having to check 100 websites)
+2. to avoid ML curation by the sources - thus hopefully showing content that truly matters to the user
+
+1. Create a selection of sourcers
+ - twitter, facebook, reddit, youtube, website, etc
+2. Add the ability of some sourcers (e.g. website) to discover new content (e.g. navigate related links and categorise content, then match with user prefs)
+3. Show content to the user in NodeShow

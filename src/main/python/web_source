@@ -1,0 +1,27 @@
+from newspaper import Article
+
+def process_source(url):
+    article = Article(url)
+    article.download()
+    article.parse()
+    article.nlp()
+    
+    return article
+    #article.authors
+    #article.publish_date
+    #article.text
+    #article.top_image
+    #article.movies
+    #article.keywords
+    #article.summary
+    
+def process_aggregate(sources):
+    aggregated = newspaper.build(sources.url)
+    
+    for article in aggregated.articles:
+        result = process_source(article.url)
+    
+    return result
+    #for category in cnn_paper.category_urls():
+    #    print(category)
+

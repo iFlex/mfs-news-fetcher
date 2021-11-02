@@ -1,0 +1,14 @@
+[
+{"url":"http://highscalability.com/","tags":["technology","distributed systems","system architecture","system design"]},
+{"url":"https://arstechnica.com/","tags":["technology","news"]},
+{"url":"https://www.reddit.com/r/Romania/"},
+{"url":"https://engineering.atspotify.com/"},
+{"url":"https://netflixtechblog.com/"},
+{"url":"https://blog.palantir.com/"},
+{"url":"https://blog.google/technology/developers/"},
+{"url":"https://hackaday.com/"},
+{"url":"https://shipilev.net/jvm/anatomy-quarks/"},
+
+{"url":"https://www.reddit.com/r/Android/", "type":"reddit"},
+{"url":"https://www.reddit.com/r/Romania/", "type":"reddit"}
+]

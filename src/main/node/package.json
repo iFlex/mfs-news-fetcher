@@ -1,0 +1,10 @@
+{
+    "dependencies": {
+      "request": "*",
+      "request-promise": "*",
+      "cheerio": "*",
+      "puppeteer": "*",
+      "socket.io-client": "*"
+    }
+  }
+  
