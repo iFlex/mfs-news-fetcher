@@ -99,8 +99,6 @@ class RedditSourcer {
 
     getVideo(post, $) {
         let node = this.findNode(post, $, {'tagName':'video'})
-        console.log("Video node?")
-        console.log(node)
         if (node) {
             return $(node).html()
         }        

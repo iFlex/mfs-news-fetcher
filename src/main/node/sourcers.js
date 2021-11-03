@@ -1,8 +1,6 @@
 const RedditSourcer = require('./sourcers/reddit/main')
 const Notifier = require('./notifier')
 
-const pid = 'smqhC';
-
 const sourcers = []
 const sources = require('../../resources/sources.json')
 for (const item of Object.values(sources)) {
@@ -11,9 +9,11 @@ for (const item of Object.values(sources)) {
     }
 }
 
-const categories = {}
-for (const sourcer of sourcers) {
-    sourcer.getPosts().then(function(posts) {
+function sendUpdatesToNodeShow(sourcers, pid) {
+    const categories = {}
+
+    for (const sourcer of sourcers) {
+        sourcer.getPosts().then(function(posts) {
         for(const post of posts) {
             let category = post.category;
             //make category if it doesn't exist
@@ -21,10 +21,39 @@ for (const sourcer of sourcers) {
                 Notifier.makeCathegory(pid, category)
                 categories[category] = true
             }
-    
+
             Notifier.sendArticle(pid, category, post.title, post.id, post.url, post.html())
         }
-    }).catch(function(err){
-        console.error(`Failed to parse sourcer ${err}`)
-    });
+        }).catch(function(err){
+            console.error(`Failed to parse sourcer ${err}`)
+        });
+    }
 }
+
+const http = require('http')
+const options = {
+  hostname: 'localhost',
+  port: 8080,
+  path: '/new',
+  method: 'GET'
+}
+
+const req = http.request(options, res => {
+  console.log(`statusCode: ${res.statusCode}`)
+  let body = ''
+  res.on('data', d => {
+    body += d
+  })
+
+  res.on('end', function() {
+    console.log(`News presentation: ${body}`)
+    sendUpdatesToNodeShow(sourcers, body)
+  })
+})
+
+req.on('error', error => {
+  console.error(error)
+})
+
+req.end()
+

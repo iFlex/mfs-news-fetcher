@@ -37,10 +37,7 @@ function sendInject (pid, parentId, unserialized) {
   unserdata.detail.descriptor = unserialized
 
   const data = JSON.stringify(unserdata)
-  console.log(`Sending ${data.length} bytes`)
-  console.log(data)
-  console.log()
-  //socket.emit('update', data)
+  socket.emit('update', data)
 }
 
 function sendCategory (pid, name) {
