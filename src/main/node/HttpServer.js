@@ -7,16 +7,23 @@ const NODE_SHOW_HOST = (process.env.NODE_SHOW_HOST || "http://localhost:8080") +
 console.log(`Configured NewsStand redirect server with`)
 console.log(`Server config: ${SERVER}`)
 console.log(`NodeShot @ ${NODE_SHOW_HOST}`)
+
 //HTTP
-const http = require('http');
+const https = require('https');
 const url = require('url');
+
+const options = {
+    key: fs.readFileSync(process.env.TLS_CERT_KEY),
+    cert: fs.readFileSync(process.env.TLS_CERT)
+};
+
 
 //This is temporary...
 class HttpRedirectServer {
     constructor(resolvePidByUid) {
         this.resolve = resolvePidByUid
 
-        const server = http.createServer((request, response) => {
+        const server = https.createServer((request, response) => {
             console.log(`${request.method} - ${request.url}`)
             try {
               this.handle(request, response);
