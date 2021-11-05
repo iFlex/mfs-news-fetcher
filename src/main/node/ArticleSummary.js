@@ -1,6 +1,7 @@
 class ArticleSummary {
-    constructor (id, category, title, url, summary, image, video, iframe) { 
+    constructor (id, source, category, title, url, summary, image, video, iframe) { 
         this.id = id
+        this.source = source
         this.title = title
         this.category = category
         this.url = url

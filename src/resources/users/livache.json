@@ -1,0 +1,15 @@
+{
+    "id":"Livache",
+    "sources":[
+        {"url":"https://www.reddit.com/r/Science/", "type":"reddit"},
+        {"url":"https://www.reddit.com/r/bigdata/", "type":"reddit"},
+        {"url":"https://www.reddit.com/r/dataisbeautiful/", "type":"reddit"},
+        {"url":"https://www.reddit.com/r/java/", "type":"reddit"},
+        {"url":"https://www.reddit.com/r/opensource/", "type":"reddit"},
+        {"url":"https://www.reddit.com/r/programming/", "type":"reddit"},
+        {"url":"https://www.reddit.com/r/linux/", "type":"reddit"},
+        {"url":"https://www.reddit.com/r/Android/", "type":"reddit"},
+        {"url":"https://www.reddit.com/r/dailyprogrammer/", "type":"reddit"},
+        {"url":"https://www.reddit.com/r/Romania/", "type":"reddit"}
+    ]
+}

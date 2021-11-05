@@ -1,6 +1,9 @@
+const process = require('process')
 const io = require('socket.io-client')
+const http = require('http')
 
-socket = io(`ws://localhost:8080`)
+const host = process.env.NODE_SHOW_HOST || "localhost:8080"
+socket = io(`ws://${host}`)
 //todo register robot
 
 const templateInject = {
@@ -57,7 +60,36 @@ function sendArticle (pid, category, title, id, source, data) {
   sendInject(pid, category, crd)
 }
 
+function makePresentation(callback) {
+  const options = {
+    hostname: 'localhost',
+    port: 8080,
+    path: '/new',
+    method: 'GET'
+  }
+  
+  const req = http.request(options, res => {
+    let body = ''
+    res.on('data', d => {
+      body += d
+    })
+  
+    res.on('end', function() {
+      console.log(`News presentation: ${body}`)
+      callback(body)
+    })
+  })
+  
+  req.on('error', error => {
+    console.error(error)
+    callback(null)
+  })
+  
+  req.end()
+}
+
 module.exports = {
+    makePresentation: makePresentation,
     makeCathegory: sendCategory,
     sendArticle: sendArticle 
 }

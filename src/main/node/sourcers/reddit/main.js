@@ -1,7 +1,7 @@
 const rp = require('request-promise');
 const cheerio = require('cheerio');
 
-const ArticleSummary = require('../ArticleSummary')
+const ArticleSummary = require('../../ArticleSummary')
 
 class RedditSourcer {
     static host = "https://www.reddit.com/r/"
@@ -127,6 +127,7 @@ class RedditSourcer {
                 list.push(
                     new ArticleSummary(
                         this.makeId(title),           //ID
+                        this.#url,                    //Source (the reddit page)
                         this.#reddit,                 //CATEGORY. ToDo: infer this from content in the future
                         title,                        //TITLE
                         this.findUrl(post, $),        //URL
