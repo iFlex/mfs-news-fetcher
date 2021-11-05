@@ -12,9 +12,18 @@ console.log(`NodeShot @ ${NODE_SHOW_HOST}`)
 const https = require('https');
 const url = require('url');
 
+const fs = require('fs')
+if (!process.env.TLS_CERT_KEY || !process.env.TLS_CERT) {
+    console.log("Please provide environment variables for the HTTPS server TLS config")
+    console.log("TLS_CERT: path to certificate")
+    console.log("TLS_CERT_KEY: path to the key file")
+    process.exit(0)
+}
+
 const options = {
     key: fs.readFileSync(process.env.TLS_CERT_KEY),
-    cert: fs.readFileSync(process.env.TLS_CERT)
+    cert: fs.readFileSync(process.env.TLS_CERT),
+    ciphers: "DEFAULT:!SSLv2:!RC4:!EXPORT:!LOW:!MEDIUM:!SHA1"
 };
 
 
@@ -23,7 +32,7 @@ class HttpRedirectServer {
     constructor(resolvePidByUid) {
         this.resolve = resolvePidByUid
 
-        const server = https.createServer((request, response) => {
+        const server = https.createServer(options, (request, response) => {
             console.log(`${request.method} - ${request.url}`)
             try {
               this.handle(request, response);
