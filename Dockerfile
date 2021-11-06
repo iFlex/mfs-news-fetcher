@@ -12,7 +12,8 @@ COPY . .
 EXPOSE 8081
 
 ENV PORT=8081
-ENV NODE_SHOW_HOST=localhost:8080
+ENV NODE_SHOW_HOST=mfs.milorad.net
+ENV NODE_SHOW_PORT=8080
 ENV USER_BASE=/usr/newsstand/src/resources/users/
 
 ENTRYPOINT ["nodejs", "/usr/newsstand/src/main/node/feed.js"]

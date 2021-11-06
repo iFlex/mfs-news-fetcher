@@ -1,9 +1,11 @@
 const process = require('process')
 const io = require('socket.io-client')
-const http = require('http')
+const https = require('https')
 
-const host = process.env.NODE_SHOW_HOST || "localhost:8080"
-socket = io(`ws://${host}`)
+const NODE_SHOW_HOST = process.env.NODE_SHOW_HOST || "localhost"
+const NODE_SHOW_PORT = process.env.NODE_SHOW_PORT || 8080
+
+socket = io(`https://${NODE_SHOW_HOST}:${NODE_SHOW_PORT}`)
 //todo register robot
 
 const templateInject = {
@@ -62,13 +64,13 @@ function sendArticle (pid, category, title, id, source, data) {
 
 function makePresentation(callback) {
   const options = {
-    hostname: 'localhost',
-    port: 8080,
+    hostname: NODE_SHOW_HOST,
+    port: NODE_SHOW_PORT,
     path: '/new',
     method: 'GET'
   }
   
-  const req = http.request(options, res => {
+  const req = https.request(options, res => {
     let body = ''
     res.on('data', d => {
       body += d

@@ -1,12 +1,13 @@
 const process = require('process')
 
 const PORT= process.env.PORT || 8081;
-const SERVER=`http://localhost:${PORT}/`;
-const NODE_SHOW_HOST = (process.env.NODE_SHOW_HOST || "http://localhost:8080") +"/news.html"
+const SERVER=`https://localhost:${PORT}/`;
+
+const NODE_SHOW_URL = `https://${(process.env.NODE_SHOW_HOST || "localhost")}:${(process.env.NODE_SHOW_PORT || 8080)}/news.html`
 
 console.log(`Configured NewsStand redirect server with`)
 console.log(`Server config: ${SERVER}`)
-console.log(`NodeShot @ ${NODE_SHOW_HOST}`)
+console.log(`NodeShow @ ${NODE_SHOW_URL}`)
 
 //HTTP
 const https = require('https');
@@ -52,7 +53,7 @@ class HttpRedirectServer {
         let prezzoId = this.resolve(userId)
 
         if (prezzoId) {
-            let url = `${NODE_SHOW_HOST}?pid=${prezzoId}`
+            let url = `${NODE_SHOW_URL}?pid=${prezzoId}`
             res.writeHead(200, {'Content-Type': 'text/html'});
             res.write(`<html><body><h3>Your news feed:</h3><a href="${url}"><span>${url}</span></a>`);
         } else {
