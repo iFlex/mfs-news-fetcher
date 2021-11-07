@@ -5,7 +5,19 @@ const https = require('https')
 const NODE_SHOW_HOST = process.env.NODE_SHOW_HOST || "localhost"
 const NODE_SHOW_PORT = process.env.NODE_SHOW_PORT || 8080
 
-socket = io(`https://${NODE_SHOW_HOST}:${NODE_SHOW_PORT}`)
+socket = io(`https://${NODE_SHOW_HOST}:${NODE_SHOW_PORT}`, 
+{ //INSECURE
+  rejectUnauthorized: false,
+  requestCert: true,  
+  agent: false
+});
+
+socket.on("connect_error", (err) => {  console.log(`connect_error due to ${err.message}`);});
+socket.on('error', function(err) {
+  console.log("Error while Socket.IO emit")
+  console.log(err)
+});
+
 //todo register robot
 
 const templateInject = {
@@ -67,7 +79,11 @@ function makePresentation(callback) {
     hostname: NODE_SHOW_HOST,
     port: NODE_SHOW_PORT,
     path: '/new',
-    method: 'GET'
+    method: 'GET',
+    //INSECURE::
+    rejectUnauthorized: false,
+    requestCert: true,
+    agent: false
   }
   
   const req = https.request(options, res => {
