@@ -1,13 +1,16 @@
 const rp = require('request-promise');
 const cheerio = require('cheerio');
-
+const Executor = require('../../utils/RateLimitedWorker')
 const ArticleSummary = require('../../ArticleSummary')
+
+//10 Requests per second
+let executor = new Executor(100);
 
 class RedditSourcer {
     static host = "https://www.reddit.com/r/"
     #reddit = null
     #url = null
-
+    
     static getReddit(url) {
         let s = url.substring(RedditSourcer.host.length, url.length)
         s = s.substring(0, s.indexOf('/'))
@@ -17,7 +20,7 @@ class RedditSourcer {
     constructor (url) {
         this.#url = url;
         this.#reddit = RedditSourcer.getReddit(url)
-
+        
         console.log(`Created reddit sourcer for ${this.#reddit}`)
     }
     
@@ -115,7 +118,12 @@ class RedditSourcer {
 
     //ToDo: should be able to categorise via content
     getPosts() {
-        return rp(this.#url).then(html => {
+        return executor.submit(
+            function() { 
+                return rp(this.#url);
+            },
+            this
+        ).then(html => {
             const $ = cheerio.load(html)
             const posts = $('div .Post')
             let list = []

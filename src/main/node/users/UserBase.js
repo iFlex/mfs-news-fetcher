@@ -4,7 +4,7 @@ const User = require('./User')
 
 class UserBase {
     constructor(usersPath) { 
-        this.usersPath = usersPath || process.env.USERS_PATH
+        this.usersPath = usersPath
         this.users = {}
         this.allSources = {}
 
@@ -48,4 +48,4 @@ class UserBase {
     }
  }
 
- module.exports = new UserBase(process.env.USER_BASE);
+ module.exports = new UserBase(process.env.USER_BASE || "../../resources/users/");

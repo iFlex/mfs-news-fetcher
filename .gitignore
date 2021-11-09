@@ -168,7 +168,8 @@ build/Release
 node_modules/
 jspm_packages/
 package-lock.json
-
+dist/
+out/
 # TypeScript v1 declaration files
 typings/
 

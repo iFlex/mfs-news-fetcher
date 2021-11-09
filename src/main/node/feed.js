@@ -41,7 +41,7 @@ function handleArticle(article){
     }
 
     for (const pid of Object.keys(pids)) {
-        if (!(article.category in categoryPerPrezzo[pid])) {
+        if ((pid in categoryPerPrezzo) && !(article.category in categoryPerPrezzo[pid])) {
             console.log(`Makling category ${article.category} in prezzo ${pid}`)
             Notifier.makeCathegory(pid, article.category)
             categoryPerPrezzo[pid][article.category] = true
@@ -67,9 +67,22 @@ function userToPrezzoId(userId){
     return userIdToPrezzoId[userId]
 }
 
-makeDailyPrezzos((e) => {
-    console.log("Fetching articles")
-    sourcers.fetch(handleArticles)
-})
+let hourDelta = 1000*60*60
+let lastTime = null
+function processStep() {
+    let nw = Date.now()
+    if (!lastTime && ((nw - lastTime) > hourDelta)) {
+        lastTime = nw;
 
-setInterval(makeDailyPrezzos, 86400000)
+        makeDailyPrezzos((e) => {
+            console.log("Fetching articles")
+            sourcers.fetch(handleArticles)
+        })
+    } else {
+        sourcers.fetch(handleArticles)
+    }
+    console.log("Snoozing for another hour")
+}
+
+processStep();
+setInterval(processStep, hourDelta)
