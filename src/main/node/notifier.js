@@ -23,7 +23,7 @@ socket.on('error', function(err) {
 const templateInject = {
   presentationId: "",
   userId: "robot",
-  event:"container.createSerialized",
+  event:"container.create",
   detail: {
     parentId: null,
     descriptor:{}
