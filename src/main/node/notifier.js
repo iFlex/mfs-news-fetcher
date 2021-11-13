@@ -39,7 +39,8 @@ const category = {
 const card = {
   "nodeName":"DIV",
   "className":"news-feed-card",
-  "id":""
+  "id":"",
+  "permissions":{"container.set.width":{"*":false}}
 }
 
 function clone (obj) {
