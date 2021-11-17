@@ -2,15 +2,31 @@ const process = require('process')
 const io = require('socket.io-client')
 const https = require('https')
 
+const DEBUG = process.env.DEBUG || false
 const NODE_SHOW_HOST = process.env.NODE_SHOW_HOST || "localhost"
 const NODE_SHOW_PORT = process.env.NODE_SHOW_PORT || 8080
 
-socket = io(`https://${NODE_SHOW_HOST}:${NODE_SHOW_PORT}`, 
-{ //INSECURE
-  rejectUnauthorized: false,
-  requestCert: true,  
-  agent: false
-});
+let socketIoConfig = {}
+let httpOptions = {
+  hostname: NODE_SHOW_HOST,
+  port: NODE_SHOW_PORT,
+  path: '/new',
+  method: 'GET',
+}
+
+if (DEBUG) {
+  //INSECURE - for local debug only
+  socketIoConfig = {
+    rejectUnauthorized: false,
+    requestCert: true,  
+    agent: false
+  }
+  httpOptions['rejectUnauthorized'] = false;
+  httpOptions['requestCert'] = true;
+  httpOptions['agent'] = false;
+}
+
+socket = io(`https://${NODE_SHOW_HOST}:${NODE_SHOW_PORT}`, socketIoConfig);
 
 socket.on("connect_error", (err) => {  console.log(`connect_error due to ${err.message}`);});
 socket.on('error', function(err) {
@@ -76,18 +92,8 @@ function sendArticle (pid, category, title, id, source, data) {
 }
 
 function makePresentation(callback) {
-  const options = {
-    hostname: NODE_SHOW_HOST,
-    port: NODE_SHOW_PORT,
-    path: '/new',
-    method: 'GET',
-    //INSECURE::
-    rejectUnauthorized: false,
-    requestCert: true,
-    agent: false
-  }
   
-  const req = https.request(options, res => {
+  const req = https.request(httpOptions, res => {
     let body = ''
     res.on('data', d => {
       body += d
