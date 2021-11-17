@@ -69,11 +69,13 @@ function userToPrezzoId(userId){
 
 let hourDelta = 1000*60*60
 let lastTime = null
-function processStep() {
-    let nw = Date.now()
-    if (!lastTime && ((nw - lastTime) > hourDelta)) {
-        lastTime = nw;
 
+function processStep() {
+    let nw = new Date(Date.now())
+    nw.setHours(0,0,0,0)
+
+    if (!lastTime || nw > lastTime) {
+        lastTime = nw;
         makeDailyPrezzos((e) => {
             console.log("Fetching articles")
             sourcers.fetch(handleArticles)
