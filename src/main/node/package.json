@@ -1,9 +1,8 @@
 {
     "dependencies": {
-      "request": "*",
-      "request-promise": "*",
-      "cheerio": "*",
-      "socket.io-client": "*"
+        "cheerio": "*",
+        "request": "*",
+        "request-promise": "*",
+        "socket.io-client": "*"
     }
-  }
-  
+}

@@ -5,36 +5,48 @@ const https = require('https')
 const DEBUG = process.env.DEBUG || false
 const NODE_SHOW_HOST = process.env.NODE_SHOW_HOST || "localhost"
 const NODE_SHOW_PORT = process.env.NODE_SHOW_PORT || 8080
+const NODE_SHOW_PSK = 'thisisfordemoonly'
 
-let socketIoConfig = {}
+let socketIoConfig = {
+  extraHeaders: {
+    Authorization: `${NODE_SHOW_PSK}`//[TODO]: use real oauth
+  }
+}
+
 let httpOptions = {
   hostname: NODE_SHOW_HOST,
   port: NODE_SHOW_PORT,
   path: '/new',
   method: 'GET',
+  headers: {
+    Authorization: `${NODE_SHOW_PSK}`//[TODO]: use real oauth
+  }
 }
 
+
+//[TODO]: add auth header in socketio config as well
 if (DEBUG) {
   //INSECURE - for local debug only
-  socketIoConfig = {
-    rejectUnauthorized: false,
-    requestCert: true,  
-    agent: false
-  }
+  socketIoConfig.rejectUnauthorized = false
+  socketIoConfig.requestCert = true  
+  socketIoConfig.agent = false
+  
   httpOptions['rejectUnauthorized'] = false;
   httpOptions['requestCert'] = true;
   httpOptions['agent'] = false;
 }
 
-socket = io(`https://${NODE_SHOW_HOST}:${NODE_SHOW_PORT}`, socketIoConfig);
-
-socket.on("connect_error", (err) => {  console.log(`connect_error due to ${err.message}`);});
+let socketIoURL = `https://${NODE_SHOW_HOST}:${NODE_SHOW_PORT}`
+console.log(`Connection socket.io to ${socketIoURL}`)
+socket = io(socketIoURL, socketIoConfig);
+socket.on("connect_error", (err) => {  
+  console.log(`connect_error due to ${err}`);
+  console.log(err)
+});
 socket.on('error', function(err) {
   console.log("Error while Socket.IO emit")
   console.log(err)
 });
-
-//todo register robot
 
 const templateInject = {
   presentationId: "",
@@ -70,8 +82,9 @@ function sendInject (pid, parentId, unserialized) {
   unserdata.detail.parentId = parentId
   unserdata.detail.descriptor = unserialized
 
-  const data = JSON.stringify(unserdata)
-  socket.emit('update', data)
+  socket.emit('update', unserdata, (cb) => {
+    console.log(`server ack`) 
+  })
 }
 
 function sendCategory (pid, name) {
@@ -92,8 +105,9 @@ function sendArticle (pid, category, title, id, source, data) {
 }
 
 function makePresentation(callback) {
-  
+  console.log(httpOptions)
   const req = https.request(httpOptions, res => {
+    console.log('Got response?')
     let body = ''
     res.on('data', d => {
       body += d
@@ -109,7 +123,6 @@ function makePresentation(callback) {
     console.error(error)
     callback(null)
   })
-  
   req.end()
 }
 
