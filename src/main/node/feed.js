@@ -1,10 +1,8 @@
 const UserBase = require("./users/UserBase")
 const Sourcers = require("./sourcers/sourcers")
 const Notifier = require("./pushers/NodeShowPusher")
-//const HttpServer = require("./HttpServer")
 
 const sourcers = new Sourcers(UserBase.getAllSources())
-//const httpServer = new HttpServer(userToPrezzoId)
 const userIdToPrezzoId = {}
 let categoryPerPrezzo = {}
 
@@ -42,12 +40,12 @@ function handleArticle(article){
 
     for (const pid of Object.keys(pids)) {
         if ((pid in categoryPerPrezzo) && !(article.category in categoryPerPrezzo[pid])) {
-            console.log(`Makling category ${article.category} in prezzo ${pid}`)
+            console.log(`Making category ${article.category} in prezzo ${pid}`)
             Notifier.makeCathegory(pid, article.category)
             categoryPerPrezzo[pid][article.category] = true
         }
         
-        console.log(`Sending article to ${pid}`)
+        console.log(`Sending article ${article.category} to ${pid}`)
         Notifier.sendArticle(pid, article.category, article.title, article.id, article.source, article.html())
     }
 }
@@ -58,7 +56,7 @@ function handleArticles(articles) {
         return;
     }
 
-    for (const article of articles){
+    for (const article of articles) {
         handleArticle(article)
     }
 }
@@ -77,10 +75,11 @@ function processStep() {
     if (!lastTime || nw > lastTime) {
         lastTime = nw;
         makeDailyPrezzos((e) => {
-            console.log("Fetching articles")
+            console.log(`Fetching all articles articles`)
             sourcers.fetch(handleArticles)
         })
     } else {
+        console.log(`Refreshing all articles articles`)
         sourcers.fetch(handleArticles)
     }
     console.log("Snoozing for another hour")

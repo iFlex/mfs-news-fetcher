@@ -4,8 +4,14 @@ Why?
 1. to have one place for all the news (i generally like that, hate having to check 100 websites)
 2. to avoid ML curation by the sources - thus hopefully showing content that truly matters to the user
 
-1. Create a selection of sourcers
- - twitter, facebook, reddit, youtube, website, etc
-2. Add the ability of some sourcers (e.g. website) to discover new content (e.g. navigate related links and categorise content, then match with user prefs)
-3. Show content to the user in NodeShow
-4. Create NodeShow under given user's name - eliminates the need to have a HTTP server in this project
+DONE
+-------------------------------------------------------------------------------------------------
+- Show content to the user in NodeShow
+- Create NodeShow under given user's name - eliminates the need to have a HTTP server in this project
+- Reddit sourcer
+-------------------------------------------------------------------------------------------------
+* Website Sourcers:
+    - ArsTechnica, TechRader, etc
+* Use NodeShow layout system: horizontal list, vertical list to style the newsfeed. Consider how to do it without too much coupling
+[L] Integrate callbacks from NodeShow to collect metrics on what the user does with the news bits: i.e. clicked on, deleted, prezzo deleted[L] Add the ability of some sourcers (e.g. website) to discover new content (e.g. navigate related links and categorise content, then match with user prefs)
+[L] Add the ability of some sourcers (e.g. website) to discover new content (e.g. navigate related links and categorise content, then match with user prefs)
