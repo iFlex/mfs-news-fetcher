@@ -1,5 +1,11 @@
 const RedditSourcer = require('./reddit/main')
-const ArsSourcer = require('./website/arstechnica/sourcer')
+const ArsTechnica = require('./website/arstechnica/sourcer')
+const ComputerWorld = require('./website/computerworld/sourcer')
+const YCombinator = require('./website/ycombinator/sourcer')
+const Hackaday = require('./website/hackaday/sourcer')
+const Spotify = require('./website/spotifyblog/sourcer')
+const TechCrunch = require('./website/techcrunch/sourcer')
+
 
 class Sourcer {
 
@@ -14,14 +20,25 @@ class Sourcer {
         this.sourcers.push(new RedditSourcer(item.url))
       }
       if (item.type == 'arstechnica') {
-        this.sourcers.push(new ArsSourcer())
+        this.sourcers.push(new ArsTechnica())
+      }
+      if (item.type == 'computerworld') {
+        this.sourcers.push(new ComputerWorld())
+      }
+      if (item.type == 'ycombinator') {
+        this.sourcers.push(new YCombinator())
+      }
+      if (item.type == 'hackaday') {
+        this.sourcers.push(new Hackaday())
+      }
+      if (item.type == 'spotify') {
+        this.sourcers.push(new Spotify());
       }
     }
   }
 
   fetch(callback) {
     for (const sourcer of this.sourcers) {
-      console.log(sourcer)
       sourcer.getPosts().then(callback)
     }
   }

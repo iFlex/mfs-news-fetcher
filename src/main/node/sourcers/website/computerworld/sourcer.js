@@ -2,30 +2,23 @@ const ArticleSummary = require('../../../ArticleSummary')
 const WebSourcer = require('../websourcer')
 
 
-const expression = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi;
-const regex = new RegExp(expression);
-
 function filter($, page) {
-    // $('div').filter(function (i, el) {
-    //     let cls = $(el).attr('class');
-    //     return (cls && cls.includes('content-item'));
-    //   });//.filter('.content-item');
-    //console.log(page)
-    let posts = $(page).find('article');
-    //console.log(`Found ${posts.length} posts`)
-    //console.log(posts[0])
+    let posts = $('div').filter('.content-item');
+    console.log(`Found ${posts.length} posts`)
     return posts;
 }
 
 function transformer($, node, sorucerDetail) {
     try{
-        let headerNode = $(node).children("header").first();
-        let titleNode = $(headerNode).children("h2").first().children("a");
-        let articleUrl = $(titleNode).attr('href');
-        let summary = $(node).children("div").first().text();
-        let imgNode = $(node).children("figure").first().children("picture").first().children('img');
-        let imageUrl = imgNode.attr('src');
-        let title = titleNode.text();
+        let headerNode = $(node).find('div .post-cont').first();
+        let titleNode = $(headerNode).find('h3').first().find('a');
+        let summaryNode = $(headerNode).find('h4').first();
+        let figureNode = $(node).find('figure').first();
+        let title = $(titleNode).text();
+        let articleUrl = `${sorucerDetail.url}${$(titleNode).attr('href')}`;
+        let summary = $(summaryNode).text();
+        let imgNode = $(figureNode).find('img').first();
+        let imageUrl = $(imgNode).attr('data-original');
         
         return new ArticleSummary(
             `${sorucerDetail.url}-${title.replaceAll(' ','')}`,         //ID
@@ -44,12 +37,12 @@ function transformer($, node, sorucerDetail) {
     }
 }
 
-class TechCrunchSourcer {
-	#url = "https://techcrunch.com/";
+class ComputerWorldSorucer {
+	#url = "https://www.computerworld.com/";
     #sourcer = null;
 
 	constructor() {
-		console.log(`Created ArsTechnica sourcer`)
+		console.log(`Created ComputerWorldSorucer sourcer`)
         this.#sourcer = new WebSourcer(this.#url)
         this.#sourcer.setFilter(filter);
         this.#sourcer.setArticleTransformer(transformer);
@@ -64,4 +57,4 @@ class TechCrunchSourcer {
     }
 }
 
-module.exports = TechCrunchSourcer
+module.exports = ComputerWorldSorucer

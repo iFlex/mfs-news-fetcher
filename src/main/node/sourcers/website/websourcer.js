@@ -24,6 +24,7 @@ class WebsiteSourcer {
     }
 
 	getPosts() {
+        console.log(`Fetching from web source: ${this.#url}`)
 		return this.#executor.submit(
             function() { 
                 return rp(this.#url);
@@ -49,6 +50,10 @@ class WebsiteSourcer {
             console.trace(err);
             console.error(`Failed to parse webpage:(${this.#url}) - ${err}`)
         });
+    }
+
+    getUrl() {
+        return this.#url;
     }
 }
 

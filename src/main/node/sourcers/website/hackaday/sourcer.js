@@ -1,40 +1,32 @@
+const { find } = require('domutils');
 const ArticleSummary = require('../../../ArticleSummary')
 const WebSourcer = require('../websourcer')
-
 
 const expression = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi;
 const regex = new RegExp(expression);
 
 function filter($, page) {
-    // $('div').filter(function (i, el) {
-    //     let cls = $(el).attr('class');
-    //     return (cls && cls.includes('content-item'));
-    //   });//.filter('.content-item');
-    //console.log(page)
-    let posts = $(page).find('article');
-    //console.log(`Found ${posts.length} posts`)
-    //console.log(posts[0])
+    let posts = $('article');
+    console.log(`Found ${posts.length} posts`)
     return posts;
 }
 
 function transformer($, node, sorucerDetail) {
     try{
-        let headerNode = $(node).children("header").first();
-        let titleNode = $(headerNode).children("h2").first().children("a");
+        let titleNode = $(node).find('.entry-title').first().find('a').first();
+        let title = $(titleNode).text();
         let articleUrl = $(titleNode).attr('href');
-        let summary = $(node).children("div").first().text();
-        let imgNode = $(node).children("figure").first().children("picture").first().children('img');
-        let imageUrl = imgNode.attr('src');
-        let title = titleNode.text();
+        let imgNode = $(node).find('div').filter('.entry-featured-image').first().children('a').first();
+        let imageUrl = ($(imgNode).attr('style') || "").match(regex);;
         
         return new ArticleSummary(
             `${sorucerDetail.url}-${title.replaceAll(' ','')}`,         //ID
             sorucerDetail.url,                                          //Source (the reddit page)
-            "tech",                                                     //CATEGORY. ToDo: infer this from content in the future
+            "tinkering",                                                //CATEGORY. ToDo: infer this from content in the future
             title,                                                      //TITLE
             articleUrl,                                                 //URL
-            summary,                                                    //Summary
-            imageUrl,                                                   //Image
+            "",                                                         //Summary
+            (imageUrl.length > 0) ? imageUrl[0].replace(")", "") : "",  //Image
             "",     //Video
             ""      //iFrame
         )
@@ -44,12 +36,12 @@ function transformer($, node, sorucerDetail) {
     }
 }
 
-class TechCrunchSourcer {
-	#url = "https://techcrunch.com/";
+class ComputerWorldSorucer {
+	#url = "https://hackaday.com/blog/";
     #sourcer = null;
 
 	constructor() {
-		console.log(`Created ArsTechnica sourcer`)
+		console.log(`Created Hackaday sourcer`)
         this.#sourcer = new WebSourcer(this.#url)
         this.#sourcer.setFilter(filter);
         this.#sourcer.setArticleTransformer(transformer);
@@ -64,4 +56,4 @@ class TechCrunchSourcer {
     }
 }
 
-module.exports = TechCrunchSourcer
+module.exports = ComputerWorldSorucer

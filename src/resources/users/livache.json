@@ -11,6 +11,11 @@
         {"url":"https://www.reddit.com/r/Android/", "type":"reddit"},
         {"url":"https://www.reddit.com/r/dailyprogrammer/", "type":"reddit"},
         {"url":"https://www.reddit.com/r/Romania/", "type":"reddit"},
-        {"url":"https://arstechnica.com/", "type":"arstechnica"}
+        
+        {"url":"https://arstechnica.com/", "type":"arstechnica"},
+        {"url":"https://www.computerworld.com/", "type":"computerworld"},
+        {"url":"https://news.ycombinator.com", "type":"ycombinator"},
+        {"url":"https://hackaday.com/blog/", "type":"hackaday"},
+        {"type":"spotify", "categories":["data","product","spotify"]}
     ]
 }

@@ -5,7 +5,7 @@ const https = require('https')
 const DEBUG = process.env.DEBUG || false
 const NODE_SHOW_HOST = process.env.NODE_SHOW_HOST || "localhost"
 const NODE_SHOW_PORT = process.env.NODE_SHOW_PORT || 8080
-const NODE_SHOW_PSK = 'thisisfordemoonly'
+const NODE_SHOW_PSK = process.env.NODE_SHOW_PSK
 
 let socketIoConfig = {
   extraHeaders: {
@@ -83,7 +83,7 @@ function sendInject (pid, parentId, unserialized) {
   unserdata.detail.descriptor = unserialized
 
   socket.emit('update', unserdata, (cb) => {
-    console.log(`server ack`) 
+    //console.log(`server ack ${cb}`) 
   })
 }
 
@@ -111,7 +111,6 @@ function makePresentation(prezOwner, callback) {
   console.log(prezOwner)
   
   const req = https.request(httpOps, res => {
-    console.log('Got response?')
     let body = ''
     res.on('data', d => {
       body += d

@@ -11,7 +11,6 @@ function filter($, page) {
 
 function transformer($, node, sorucerDetail) {
     try{
-        console.log(node);
         let headerNode = $(node).children("header").first();
         let titleNode = $(headerNode).children("h2").first().children("a");
         let articleUrl = $(titleNode).attr('href');

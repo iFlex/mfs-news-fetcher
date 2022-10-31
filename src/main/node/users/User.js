@@ -2,11 +2,17 @@ class User {
     nodeShowId = null;
     id = null;
     sources = {};
+    interests = {
+        "categories":[]
+    };
 
     constructor(id, sources) {
         this.id = id
         for (const source of sources) {
             this.sources[source.url] = source
+            if (source.categories) {
+                this.interests["categories"] = this.interests["categories"].concat(source.categories);
+            }
         }
     }
 
@@ -24,7 +30,11 @@ class User {
 
     //currently very crude matching of interests, no sorting
     isInterested(article) {
+        console.log(`User interested in: ${article.source} - ${article.category}`)
         if (article.source in this.sources) {
+            return true;
+        }
+        if (this.interests["categories"].includes(article.category)) {
             return true;
         }
         return false;
