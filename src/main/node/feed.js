@@ -1,10 +1,10 @@
 const UserBase = require("./users/UserBase")
 const Sourcers = require("./sourcers/sourcers")
-const Notifier = require("./notifier")
-const HttpServer = require("./HttpServer")
+const Notifier = require("./pushers/NodeShowPusher")
+//const HttpServer = require("./HttpServer")
 
 const sourcers = new Sourcers(UserBase.getAllSources())
-const httpServer = new HttpServer(userToPrezzoId)
+//const httpServer = new HttpServer(userToPrezzoId)
 const userIdToPrezzoId = {}
 let categoryPerPrezzo = {}
 
@@ -16,7 +16,7 @@ function makeDailyPrezzos(onReady) {
     let createdPrezzos = 0;
     for (const user of users) {
         console.log(`Making new prezzo for ${user.id}`)
-        Notifier.makePresentation((id) => {
+        Notifier.makePresentation(user.id, (id) => {
             if(id) {
                 user.setNodeShowId(id)
                 userIdToPrezzoId[user.id] = id

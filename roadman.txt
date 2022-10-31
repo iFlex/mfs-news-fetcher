@@ -8,3 +8,4 @@ Why?
  - twitter, facebook, reddit, youtube, website, etc
 2. Add the ability of some sourcers (e.g. website) to discover new content (e.g. navigate related links and categorise content, then match with user prefs)
 3. Show content to the user in NodeShow
+4. Create NodeShow under given user's name - eliminates the need to have a HTTP server in this project

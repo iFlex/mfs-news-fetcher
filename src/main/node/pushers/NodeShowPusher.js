@@ -92,7 +92,8 @@ function sendCategory (pid, name) {
   cat.id = name
   cat.innerHTML = `<h1>${name}</h1>`
 
-  sendInject(pid, "news-viewport", cat)
+  //sendInject(pid, "news-viewport", cat)
+  sendInject(pid, null, cat)
 }
 
 //todo embed title and source somehow
@@ -104,9 +105,12 @@ function sendArticle (pid, category, title, id, source, data) {
   sendInject(pid, category, crd)
 }
 
-function makePresentation(callback) {
-  console.log(httpOptions)
-  const req = https.request(httpOptions, res => {
+function makePresentation(prezOwner, callback) {
+  let httpOps = clone(httpOptions)
+  httpOps.headers.owner = prezOwner
+  console.log(prezOwner)
+  
+  const req = https.request(httpOps, res => {
     console.log('Got response?')
     let body = ''
     res.on('data', d => {
