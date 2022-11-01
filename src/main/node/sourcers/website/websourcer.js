@@ -39,7 +39,7 @@ class WebsiteSourcer {
             let index = 0
             while(posts[index]) {
                 let post = posts[index]
-                let article = this.#transformer.apply(this, [$, post, {url: this.#url}])
+                let article = this.#transformer.apply(this, [$, post, {url: this.#url, domain: this.getDomain()}])
                 if (article) {
                     list.push(article)
                 }
@@ -54,6 +54,10 @@ class WebsiteSourcer {
 
     getUrl() {
         return this.#url;
+    }
+
+    getDomain() {
+        return (new URL(this.#url)).hostname;
     }
 }
 

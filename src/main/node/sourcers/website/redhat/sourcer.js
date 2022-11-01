@@ -19,14 +19,15 @@ function transformer($, node, sorucerDetail) {
         let imageUrl = $(node).children('div').first().find('img').first().attr('src');
         let articleUrl = $(node).attr('about');
         
+        let baseUrl = `https://${sorucerDetail.domain}`;
         return new ArticleSummary(
             `${sorucerDetail.url}-${title.replaceAll(' ','')}`,         //ID
             sorucerDetail.url,                                          //Source (the reddit page)
             "tech-blog",                                                //CATEGORY. ToDo: infer this from content in the future
             title,                                                      //TITLE
-            sorucerDetail.url + articleUrl,                             //URL
+            baseUrl + articleUrl,                             //URL
             summary,                                                    //Summary
-            imageUrl,                                                   //Image
+            baseUrl + imageUrl,                               //Image
             "",                                                         //Video
             ""                                                          //iFrame
         )
