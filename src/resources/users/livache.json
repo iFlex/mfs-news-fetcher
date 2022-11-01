@@ -16,6 +16,7 @@
         {"url":"https://www.computerworld.com/", "type":"computerworld"},
         {"url":"https://news.ycombinator.com", "type":"ycombinator"},
         {"url":"https://hackaday.com/blog/", "type":"hackaday"},
+        {"url":"https://developers.redhat.com/blog/posts", "type":"redhat"},
         {"type":"spotify", "categories":["data","product","spotify"]}
     ]
 }

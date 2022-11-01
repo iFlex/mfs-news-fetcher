@@ -4,7 +4,9 @@ const ComputerWorld = require('./website/computerworld/sourcer')
 const YCombinator = require('./website/ycombinator/sourcer')
 const Hackaday = require('./website/hackaday/sourcer')
 const Spotify = require('./website/spotifyblog/sourcer')
+const RedHat = require('./website/redhat/sourcer')
 const TechCrunch = require('./website/techcrunch/sourcer')
+
 const LogFactory = require("../logger");
 const LOGGER = LogFactory.getLogger("Sourcers");
 
@@ -34,6 +36,9 @@ class Sourcer {
       }
       if (item.type == 'spotify') {
         this.sourcers.push(new Spotify());
+      }
+      if (item.type == 'redhat') {
+        this.sourcers.push(new RedHat());
       }
     }
   }
