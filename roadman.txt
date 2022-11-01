@@ -9,9 +9,11 @@ DONE
 - Show content to the user in NodeShow
 - Create NodeShow under given user's name - eliminates the need to have a HTTP server in this project
 - Reddit sourcer
+- WebsiteSourcer  => ArsTechnica, Hackaday, Computerworld, YCombinator
 -------------------------------------------------------------------------------------------------
 * Website Sourcers:
-    - ArsTechnica, TechRader, etc
+    - clean up how web sources are analized. - try to generalize the use of <article> and maybe some rules on hwo to figure out what is the title, link, image, etc.
 * Use NodeShow layout system: horizontal list, vertical list to style the newsfeed. Consider how to do it without too much coupling
 [L] Integrate callbacks from NodeShow to collect metrics on what the user does with the news bits: i.e. clicked on, deleted, prezzo deleted[L] Add the ability of some sourcers (e.g. website) to discover new content (e.g. navigate related links and categorise content, then match with user prefs)
 [L] Add the ability of some sourcers (e.g. website) to discover new content (e.g. navigate related links and categorise content, then match with user prefs)
+[L] Look into how to categorise an article automatically.

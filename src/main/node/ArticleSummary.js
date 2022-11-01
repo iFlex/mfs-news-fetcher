@@ -21,7 +21,7 @@ class ArticleSummary {
         }
 
         if (this.summary) {
-            html.push(`<p>${this.summary}</p>`)
+            html.push(`<p>${this.summary.slice(0, Math.min(144, this.summary.length))}...</p>`)
         }
         
         if (this.img) {
