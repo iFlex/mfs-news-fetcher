@@ -64,7 +64,7 @@ function makeDailyPrezzos(onReady) {
 
 function handleArticle(article){
     let interestedUsers = UserBase.getUsers().filter((user) => {
-        return user.isInterested(article) && user.notSeen(article)
+        return user.isInterested(article) && user.notSeen(article.id)
     }) 
 
     for (const user of interestedUsers) {
