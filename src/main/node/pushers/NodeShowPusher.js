@@ -86,8 +86,14 @@ function sendInject (pid, parentId, unserialized) {
   unserdata.parentId = parentId
   unserdata.detail.parentId = parentId
   unserdata.detail.descriptor = unserialized
-
-  socket.emit('update', unserdata, (cb) => {})
+  
+  //ToDo: make server return a status in the ack object
+  return new Promise(function(accept, reject) {
+    LOGGER.info(`Sending ${parentId} to ${pid}`);
+    socket.emit('update', unserdata, (cb) => {
+      accept(cb);
+    });    
+  });
 }
 
 function sendCategory (pid, name) {
@@ -105,7 +111,7 @@ function sendArticle (pid, category, title, id, source, data) {
   crd.id = id
   crd.innerHTML = data
 
-  sendInject(pid, category, crd)
+  return sendInject(pid, category, crd);
 }
 
 function joinEventStream(pid) {

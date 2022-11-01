@@ -33,14 +33,12 @@ function makeDailyPrezzos(onReady) {
 
 
 function handleArticle(article){
-    let pids = {}
-    for( const user of UserBase.getUsers()) {
-        if (user.isInterested(article)) {
-            pids[user.getNodeShowId()] = true
-        }
-    }
+    let interestedUsers = UserBase.getUsers().filter((user) => {
+        return user.isInterested(article) && user.notSeen(article)
+    }) 
 
-    for (const pid of Object.keys(pids)) {
+    for (const user of interestedUsers) {
+        let pid = user.getNodeShowId()
         if ((pid in categoryPerPrezzo) && !(article.category in categoryPerPrezzo[pid])) {
             LOGGER.info(`Making category ${article.category} in prezzo ${pid}`)
             Notifier.makeCathegory(pid, article.category)
@@ -48,7 +46,9 @@ function handleArticle(article){
         }
         
         LOGGER.info(`Sending article ${article.category} to ${pid}`)
-        Notifier.sendArticle(pid, article.category, article.title, article.id, article.source, article.html())
+        Notifier.sendArticle(pid, article.category, article.title, article.id, article.source, article.html()).then((result) =>{
+            user.markSeen(article);
+        })
     }
 }
 

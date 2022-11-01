@@ -1,3 +1,6 @@
+const LogFactory = require("../logger");
+const LOGGER = LogFactory.getLogger("User");
+
 class User {
     nodeShowId = null;
     id = null;
@@ -37,6 +40,16 @@ class User {
             return true;
         }
         return false;
+    }
+
+    notSeen(article) {
+        //ToDo implement
+        return true;
+    }
+
+    markSeen(article) {
+        //ToDo implement
+        LOGGER.debug(`${this.id} marked ${article.id} as seen`)
     }
 
     static fromJson(userInfo) {
