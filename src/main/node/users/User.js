@@ -52,6 +52,11 @@ class User {
         LOGGER.debug(`${this.id} marked ${article.id} as seen`)
     }
 
+    markOpened(artId) {
+        LOGGER.info(`${this.id} marked ${artId} as seen`)
+        //ToDo implement
+    }
+
     static fromJson(userInfo) {
         let userData = JSON.parse(userInfo)
         return new User(userData.id, userData.sources)

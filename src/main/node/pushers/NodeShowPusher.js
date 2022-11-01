@@ -39,6 +39,7 @@ if (DEBUG) {
   httpOptions['agent'] = false;
 }
 
+let serverFeedbackCallback = null;
 let socketIoURL = `https://${NODE_SHOW_HOST}:${NODE_SHOW_PORT}`
 LOGGER.info(`Connecting socket.io to ${socketIoURL}`)
 
@@ -50,8 +51,21 @@ socket.on('error', function(err) {
   LOGGER.error("Error while Socket.IO emit", err)
 });
 socket.on('activity', (data) => {
-  LOGGER.info(`feedback from server ${JSON.stringify(data)}`)
+  if (serverFeedbackCallback) {
+    serverFeedbackCallback.method.apply(serverFeedbackCallback.context, [data]);
+  }
 });
+
+function setFeedbackCallback(method, context) {
+  if (typeof method === "function" && typeof context === "object") {
+    serverFeedbackCallback = {
+      method: method,
+      context: context
+    }
+  } else {
+    throw `Passed in callback must be a function (passed in:${typeof method}). Context must be an object (passed in:${typeof context})`;
+  }
+}
 
 const templateInject = {
   presentationId: "",
@@ -76,11 +90,11 @@ const card = {
   "permissions":{"container.set.width":{"*":false}}
 }
 
-function clone (obj) {
+function clone(obj) {
   return JSON.parse(JSON.stringify(obj))
 }
 
-function sendInject (pid, parentId, unserialized) {
+function sendInject(pid, parentId, unserialized) {
   const unserdata = clone(templateInject)
   unserdata.presentationId = pid
   unserdata.parentId = parentId
@@ -96,7 +110,7 @@ function sendInject (pid, parentId, unserialized) {
   });
 }
 
-function sendCategory (pid, name) {
+function sendCategory(pid, name) {
   let cat = clone(category)
   cat.id = name
   cat.innerHTML = `<h1>${name}</h1>`
@@ -106,7 +120,7 @@ function sendCategory (pid, name) {
 }
 
 //todo embed title and source somehow
-function sendArticle (pid, category, title, id, source, data) {
+function sendArticle(pid, category, title, id, source, data) {
   let crd = clone(card)
   crd.id = id
   crd.innerHTML = data
@@ -146,5 +160,6 @@ function makePresentation(prezOwner, callback) {
 module.exports = {
     makePresentation: makePresentation,
     makeCathegory: sendCategory,
-    sendArticle: sendArticle 
+    sendArticle: sendArticle,
+    setFeedbackCallback: setFeedbackCallback 
 }

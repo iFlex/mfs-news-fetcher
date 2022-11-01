@@ -8,6 +8,36 @@ const sourcers = new Sourcers(UserBase.getAllSources())
 const userIdToPrezzoId = {}
 let categoryPerPrezzo = {}
 
+Notifier.setFeedbackCallback(handleUserInteractionFeedback, this);
+
+function handleUserInteractionFeedback(data) {
+    if (!data || !data.detail || data.detail.event !== 'user.click') {
+        //event not applicable
+        return;
+    }
+
+    if (!data.detail.id) {
+        LOGGER.error(`Could not act on server feedback, missing ID of the clicked article`);
+    }
+
+    let prezzoId = data.presentationId;
+    let userId = prezzoIdToUserId(prezzoId);
+    let user = UserBase.getUser(userId);
+    if (user) {
+        user.markOpened(data.detail.id);
+    }
+    LOGGER.info(`feedback from server ${JSON.stringify(data)}`)
+}
+
+function prezzoIdToUserId(pid) {
+    for (const [userId, prezId] of Object.entries(userIdToPrezzoId)) {
+        if (prezId === pid) {
+            return userId;
+        }
+    }
+    return null;
+}
+
 function makeDailyPrezzos(onReady) {
     const users = UserBase.getUsers()
     const numUsers = users.length

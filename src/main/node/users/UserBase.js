@@ -47,6 +47,14 @@ class UserBase {
     getUsers() {
         return Object.values(this.users)
     }
+
+    getUser(userId) {
+        if (!userId){
+            return null;
+        }
+
+        return this.users[userId];
+    }
  }
 
  module.exports = new UserBase(process.env.USER_BASE || "../../resources/users/");
