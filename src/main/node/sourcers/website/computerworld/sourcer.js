@@ -1,10 +1,11 @@
 const ArticleSummary = require('../../../ArticleSummary')
 const WebSourcer = require('../websourcer')
-
+const LogFactory = require("../../../logger");
+const LOGGER = LogFactory.getLogger("ComputerWorldSorucer");
 
 function filter($, page) {
     let posts = $('div').filter('.content-item');
-    console.log(`Found ${posts.length} posts`)
+    LOGGER.info(`Found ${posts.length} posts`)
     return posts;
 }
 
@@ -32,7 +33,7 @@ function transformer($, node, sorucerDetail) {
             ""      //iFrame
         )
     } catch (e) {
-        console.error(e);
+        LOGGER.error('Failed to process candidate article node',e);
         return null;
     }
 }
@@ -42,7 +43,7 @@ class ComputerWorldSorucer {
     #sourcer = null;
 
 	constructor() {
-		console.log(`Created ComputerWorldSorucer sourcer`)
+		LOGGER.info(`Created sourcer`)
         this.#sourcer = new WebSourcer(this.#url)
         this.#sourcer.setFilter(filter);
         this.#sourcer.setArticleTransformer(transformer);

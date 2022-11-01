@@ -30,7 +30,6 @@ class User {
 
     //currently very crude matching of interests, no sorting
     isInterested(article) {
-        console.log(`User interested in: ${article.source} - ${article.category}`)
         if (article.source in this.sources) {
             return true;
         }

@@ -2,6 +2,8 @@ const rp = require('request-promise');
 const cheerio = require('cheerio');
 const Executor = require('../../utils/RateLimitedWorker')
 const ArticleSummary = require('../../ArticleSummary')
+const LogFactory = require("../../logger");
+const LOGGER = LogFactory.getLogger("RedditSourcer");
 
 //10 Requests per second
 let executor = new Executor(100);
@@ -21,7 +23,7 @@ class RedditSourcer {
         this.#url = url;
         this.#reddit = RedditSourcer.getReddit(url)
         
-        console.log(`Created reddit sourcer for ${this.#reddit}`)
+        LOGGER.info(`Created reddit sourcer for ${this.#reddit}`)
     }
     
     makeId(title) {
@@ -150,8 +152,7 @@ class RedditSourcer {
             return list
         })
         .catch(function(err){
-            console.error(`Failed to parse reddit ${err}`)
-            console.trace(err);
+            LOGGER.error(`Failed to parse reddit ${err}`, err)
         });
     }    
 }

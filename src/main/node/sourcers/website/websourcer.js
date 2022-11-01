@@ -1,7 +1,8 @@
 const rp = require('request-promise');
 const cheerio = require('cheerio');
 const Executor = require('../../utils/RateLimitedWorker')
-
+const LogFactory = require("../../logger");
+const LOGGER = LogFactory.getLogger("WebSourcer");
 
 class WebsiteSourcer {
 	#url = null;
@@ -12,7 +13,7 @@ class WebsiteSourcer {
 	
     constructor(url) {
 		this.#url = url;
-		console.log(`Created Webite Sourcer for ${this.#url}`)
+		LOGGER.info(`Created Webite Sourcer for ${this.#url}`)
 	}
     
     setFilter(filter) {
@@ -24,7 +25,7 @@ class WebsiteSourcer {
     }
 
 	getPosts() {
-        console.log(`Fetching from web source: ${this.#url}`)
+        LOGGER.info(`Fetching from web source: ${this.#url}`)
 		return this.#executor.submit(
             function() { 
                 return rp(this.#url);
@@ -47,8 +48,7 @@ class WebsiteSourcer {
             return list
         })
         .catch(function(err) {
-            console.trace(err);
-            console.error(`Failed to parse webpage:(${this.#url}) - ${err}`)
+            LOGGER.error(`Failed to parse webpage:(${this.#url}) - ${err}`, err)
         });
     }
 

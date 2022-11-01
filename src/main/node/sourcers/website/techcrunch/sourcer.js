@@ -1,19 +1,15 @@
 const ArticleSummary = require('../../../ArticleSummary')
 const WebSourcer = require('../websourcer')
+const LogFactory = require("../../../logger");
+const LOGGER = LogFactory.getLogger("TechCrunchSourcer");
 
 
 const expression = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi;
 const regex = new RegExp(expression);
 
 function filter($, page) {
-    // $('div').filter(function (i, el) {
-    //     let cls = $(el).attr('class');
-    //     return (cls && cls.includes('content-item'));
-    //   });//.filter('.content-item');
-    //console.log(page)
     let posts = $(page).find('article');
-    //console.log(`Found ${posts.length} posts`)
-    //console.log(posts[0])
+    LOGGER.info(`Found ${posts.length} posts`)
     return posts;
 }
 
@@ -39,7 +35,7 @@ function transformer($, node, sorucerDetail) {
             ""      //iFrame
         )
     } catch (e) {
-        console.error(e);
+        LOGGER.error("Failed to process candidate article node",e);
         return null;
     }
 }
@@ -49,7 +45,7 @@ class TechCrunchSourcer {
     #sourcer = null;
 
 	constructor() {
-		console.log(`Created ArsTechnica sourcer`)
+		LOGGER.info(`Created sourcer`)
         this.#sourcer = new WebSourcer(this.#url)
         this.#sourcer.setFilter(filter);
         this.#sourcer.setArticleTransformer(transformer);

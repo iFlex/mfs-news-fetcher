@@ -1,6 +1,8 @@
 const fs = require('fs')
 const process = require('process')
 const User = require('./User')
+const LogFactory = require("../logger");
+const LOGGER = LogFactory.getLogger("UserBase");
 
 class UserBase {
     constructor(usersPath) { 
@@ -16,7 +18,7 @@ class UserBase {
         try {
             files = fs.readdirSync(this.usersPath);
         } catch(e) {
-            console.log("Couldn't parse userbase")
+            LOGGER.error("Error parsing UserBase", e)
         }
 
         for(let file of files) {
@@ -27,8 +29,7 @@ class UserBase {
                 this.users[user.id] = user
                 this.addSourcesToSet(user.getSources())
             } catch (e) {
-                console.log(`Failed to process user file: ${path} - ${e}`)
-                console.trace(e)
+                LOGGER.error(`Failed to process user file: ${path} - ${e}`, e)
             }
         }
     }

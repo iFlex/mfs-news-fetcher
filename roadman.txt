@@ -11,9 +11,14 @@ DONE
 - Reddit sourcer
 - WebsiteSourcer  => ArsTechnica, Hackaday, Computerworld, YCombinator
 -------------------------------------------------------------------------------------------------
+[M] Capture engagement - when user navigates to an article (Needs support from NodeShow)
 * Website Sourcers:
     - clean up how web sources are analized. - try to generalize the use of <article> and maybe some rules on hwo to figure out what is the title, link, image, etc.
-* Use NodeShow layout system: horizontal list, vertical list to style the newsfeed. Consider how to do it without too much coupling
+[S] Ensure articles already sent are not sent again - Especially if the user deleted the article from the feed
+
 [L] Integrate callbacks from NodeShow to collect metrics on what the user does with the news bits: i.e. clicked on, deleted, prezzo deleted[L] Add the ability of some sourcers (e.g. website) to discover new content (e.g. navigate related links and categorise content, then match with user prefs)
 [L] Add the ability of some sourcers (e.g. website) to discover new content (e.g. navigate related links and categorise content, then match with user prefs)
 [L] Look into how to categorise an article automatically.
+[S] New articles get sent to the top rather than the bottom of the list?
+* Use NodeShow layout system: horizontal list, vertical list to style the newsfeed. Consider how to do it without too much coupling
+* Templating on NodeShow side? Could help boostrap settings for links and abstraction rules

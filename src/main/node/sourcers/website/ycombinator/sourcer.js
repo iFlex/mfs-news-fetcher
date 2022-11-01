@@ -1,10 +1,12 @@
 const ArticleSummary = require('../../../ArticleSummary')
 const WebSourcer = require('../websourcer')
+const LogFactory = require("../../../logger");
+const LOGGER = LogFactory.getLogger("YCombinatorSourcer");
 
 
 function filter($, page) {
     let posts = $('tr').filter('.athing');
-    console.log(`Found ${posts.length} posts`)
+    LOGGER.info(`Found ${posts.length} posts`)
     return posts;
 }
 
@@ -27,17 +29,17 @@ function transformer($, node, sorucerDetail) {
             ""                                                          //iFrame
         )
     } catch (e) {
-        console.error(e);
+        LOGGER.error("Failed to process candidate article node",e);
         return null;
     }
 }
 
-class ComputerWorldSorucer {
+class YCombinatorSourcer {
 	#url = "https://news.ycombinator.com";
     #sourcer = null;
 
 	constructor() {
-		console.log(`Created Hackernews sourcer`)
+		LOGGER.info(`Created sourcer`)
         this.#sourcer = new WebSourcer(this.#url)
         this.#sourcer.setFilter(filter);
         this.#sourcer.setArticleTransformer(transformer);
@@ -52,4 +54,4 @@ class ComputerWorldSorucer {
     }
 }
 
-module.exports = ComputerWorldSorucer
+module.exports = YCombinatorSourcer

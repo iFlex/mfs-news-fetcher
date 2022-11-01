@@ -1,6 +1,9 @@
 const process = require('process')
 const io = require('socket.io-client')
 const https = require('https')
+const LogFactory = require("../logger");
+const LOGGER = LogFactory.getLogger("NodeShowPusher");
+
 
 const DEBUG = process.env.DEBUG || false
 const NODE_SHOW_HOST = process.env.NODE_SHOW_HOST || "localhost"
@@ -37,15 +40,17 @@ if (DEBUG) {
 }
 
 let socketIoURL = `https://${NODE_SHOW_HOST}:${NODE_SHOW_PORT}`
-console.log(`Connection socket.io to ${socketIoURL}`)
+LOGGER.info(`Connecting socket.io to ${socketIoURL}`)
+
 socket = io(socketIoURL, socketIoConfig);
 socket.on("connect_error", (err) => {  
-  console.log(`connect_error due to ${err}`);
-  console.log(err)
+  LOGGER.error(`connect_error due to ${err}`, err);
 });
 socket.on('error', function(err) {
-  console.log("Error while Socket.IO emit")
-  console.log(err)
+  LOGGER.error("Error while Socket.IO emit", err)
+});
+socket.on('activity', (data) => {
+  LOGGER.info(`feedback from server ${JSON.stringify(data)}`)
 });
 
 const templateInject = {
@@ -82,9 +87,7 @@ function sendInject (pid, parentId, unserialized) {
   unserdata.detail.parentId = parentId
   unserdata.detail.descriptor = unserialized
 
-  socket.emit('update', unserdata, (cb) => {
-    //console.log(`server ack ${cb}`) 
-  })
+  socket.emit('update', unserdata, (cb) => {})
 }
 
 function sendCategory (pid, name) {
@@ -105,10 +108,14 @@ function sendArticle (pid, category, title, id, source, data) {
   sendInject(pid, category, crd)
 }
 
+function joinEventStream(pid) {
+  LOGGER.info(`Registering for events on ${pid}`)
+  socket.emit("register", {presentationId:pid});
+}
+
 function makePresentation(prezOwner, callback) {
   let httpOps = clone(httpOptions)
   httpOps.headers.owner = prezOwner
-  console.log(prezOwner)
   
   const req = https.request(httpOps, res => {
     let body = ''
@@ -117,13 +124,14 @@ function makePresentation(prezOwner, callback) {
     })
   
     res.on('end', function() {
-      console.log(`News presentation: ${body}`)
+      LOGGER.info(`Created new News presentation: ${body}`)
+      joinEventStream(body)
       callback(body)
     })
   })
   
   req.on('error', error => {
-    console.error(error)
+    LOGGER.error('Failed to create News presentation', error)
     callback(null)
   })
   req.end()

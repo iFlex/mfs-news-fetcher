@@ -1,6 +1,8 @@
 const UserBase = require("./users/UserBase")
 const Sourcers = require("./sourcers/sourcers")
 const Notifier = require("./pushers/NodeShowPusher")
+const LogFactory = require("./logger");
+const LOGGER = LogFactory.getLogger("feed");
 
 const sourcers = new Sourcers(UserBase.getAllSources())
 const userIdToPrezzoId = {}
@@ -13,7 +15,7 @@ function makeDailyPrezzos(onReady) {
 
     let createdPrezzos = 0;
     for (const user of users) {
-        console.log(`Making new prezzo for ${user.id}`)
+        LOGGER.info(`Making new prezzo for ${user.id}`)
         Notifier.makePresentation(user.id, (id) => {
             if(id) {
                 user.setNodeShowId(id)
@@ -40,19 +42,19 @@ function handleArticle(article){
 
     for (const pid of Object.keys(pids)) {
         if ((pid in categoryPerPrezzo) && !(article.category in categoryPerPrezzo[pid])) {
-            console.log(`Making category ${article.category} in prezzo ${pid}`)
+            LOGGER.info(`Making category ${article.category} in prezzo ${pid}`)
             Notifier.makeCathegory(pid, article.category)
             categoryPerPrezzo[pid][article.category] = true
         }
         
-        console.log(`Sending article ${article.category} to ${pid}`)
+        LOGGER.info(`Sending article ${article.category} to ${pid}`)
         Notifier.sendArticle(pid, article.category, article.title, article.id, article.source, article.html())
     }
 }
 
 function handleArticles(articles) {
     if(!articles || articles.length == 0) {
-        console.error(`Received null article list...`)
+        LOGGER.error(`Received null article list...`)
         return;
     }
 
@@ -75,14 +77,14 @@ function processStep() {
     if (!lastTime || nw > lastTime) {
         lastTime = nw;
         makeDailyPrezzos((e) => {
-            console.log(`Fetching all articles articles`)
+            LOGGER.info(`Fetching all articles articles`)
             sourcers.fetch(handleArticles)
         })
     } else {
-        console.log(`Refreshing all articles articles`)
+        LOGGER.info(`Refreshing all articles articles`)
         sourcers.fetch(handleArticles)
     }
-    console.log("Snoozing for another hour")
+    LOGGER.info("Snoozing for another hour")
 }
 
 processStep();

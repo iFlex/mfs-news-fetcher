@@ -5,7 +5,8 @@ const YCombinator = require('./website/ycombinator/sourcer')
 const Hackaday = require('./website/hackaday/sourcer')
 const Spotify = require('./website/spotifyblog/sourcer')
 const TechCrunch = require('./website/techcrunch/sourcer')
-
+const LogFactory = require("../logger");
+const LOGGER = LogFactory.getLogger("Sourcers");
 
 class Sourcer {
 
@@ -13,8 +14,8 @@ class Sourcer {
     this.sources = sources
     this.sourcers = []
     
-    console.log(`Creating sourcers for sources:`)
-    console.log(sources)
+    LOGGER.info(`Creating sourcers for sources:`)
+    LOGGER.info(sources)
     for (const item of Object.values(sources)) {
       if (item.type == 'reddit') {
         this.sourcers.push(new RedditSourcer(item.url))

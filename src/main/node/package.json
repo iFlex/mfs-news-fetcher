@@ -3,6 +3,7 @@
         "cheerio": "*",
         "request": "*",
         "request-promise": "*",
-        "socket.io-client": "*"
+        "socket.io-client": "*",
+        "winston":"^3.8.2"
     }
 }

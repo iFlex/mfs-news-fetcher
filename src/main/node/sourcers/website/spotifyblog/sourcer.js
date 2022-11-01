@@ -1,9 +1,12 @@
 const ArticleSummary = require('../../../ArticleSummary')
 const WebSourcer = require('../websourcer')
+const LogFactory = require("../../../logger");
+const LOGGER = LogFactory.getLogger("SpotifySourcer");
+
 
 function filter($, page) {
     let posts = $('article');
-    console.log(`Found ${posts.length} posts`)
+    LOGGER.info(`Found ${posts.length} posts`)
     return posts;
 }
 
@@ -31,7 +34,7 @@ function transformer($, node, sorucerDetail) {
             ""      //iFrame
         )
     } catch (e) {
-        console.error(e);
+        LOGGER.error("Failed to process candidate article node",e);
         return null;
     }
 }
@@ -42,7 +45,7 @@ class SpotifySourcer {
     #sourcers = {};
 
 	constructor() {
-		console.log(`Created ComputerWorldSorucer sourcer`)
+		LOGGER.info(`Created sourcer`)
         for (const cat of this.#categories) {
             let sourcer = new WebSourcer(`${this.#url}${cat}`);
             this.#sourcers[cat] = sourcer
