@@ -4,7 +4,8 @@ const LOGGER = LogFactory.getLogger("User");
 class User {
     nodeShowId = null;
     id = null;
-    sources = {};
+    sources = {}
+    articleStatus = {}
     interests = {
         "categories":[]
     };
@@ -42,19 +43,28 @@ class User {
         return false;
     }
 
-    notSeen(article) {
-        //ToDo implement
-        return true;
+    notSeen(artId) {
+        //ToDo implement persisted storage
+        return !this.articleStatus[artId];
     }
 
-    markSeen(article) {
-        //ToDo implement
-        LOGGER.debug(`${this.id} marked ${article.id} as seen`)
+    markSeen(artId) {
+        //ToDo implement persisted storage
+        LOGGER.debug(`${this.id} has seen ${artId}`)
+        this.articleStatus[artId] = {id: artId, opened:false, rating:0}
     }
 
     markOpened(artId) {
-        LOGGER.info(`${this.id} marked ${artId} as seen`)
-        //ToDo implement
+        //ToDo implement persisted storage
+        LOGGER.debug(`${this.id} has open ${artId}`)
+        let articleStatus = this.articleStatus[artId];
+        if (!articleStatus) {
+            articleStatus = {id: artId, opened:false, rating:0}
+            this.articleStatus[artId] = articleStatus
+
+            LOGGER.error(`Article ${artId} status absent for ${this.id} when trying to mark as open. Populating...`)
+        }
+        articleStatus.opened = true;
     }
 
     static fromJson(userInfo) {

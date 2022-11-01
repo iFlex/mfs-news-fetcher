@@ -77,7 +77,7 @@ function handleArticle(article){
         
         LOGGER.info(`Sending article ${article.category} to ${pid}`)
         Notifier.sendArticle(pid, article.category, article.title, article.id, article.source, article.html()).then((result) =>{
-            user.markSeen(article);
+            user.markSeen(article.id);
         })
     }
 }
