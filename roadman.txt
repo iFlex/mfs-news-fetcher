@@ -15,9 +15,15 @@ DONE
 - [S] Integrate callbacks from NodeShow to collect metrics on what the user does with the news bits: i.e. clicked on, deleted, prezzo deleted[L] Add the ability of some sourcers (e.g. website) to discover new content (e.g. navigate related links and categorise content, then match with user prefs)
 ------- Picks up click events - no support for save / rating yet
 -------------------------------------------------------------------------------------------------
+[S] - Store presentation with User => ability to fetch associated presentation on restart and not have to create a new one all the time
+        - make sure that system works even if NodeShow fails (it should pick up after it comes back around)
+[M] - Integrate persistence for user state (including Articles delivered, opened and rated)
+[M] - Ability to swap categories around in the UI (Needs NodeShow support)
+[M] - Ability to read Authors
+[M] - Ability to read tags from article
+
 * Website Sourcers:
     - clean up how web sources are analized. - try to generalize the use of <article> and maybe some rules on hwo to figure out what is the title, link, image, etc.
-[M] - Integrate persistence for user state (including Articles delivered, opened and rated)
 [L] Add the ability of some sourcers (e.g. website) to discover new content (e.g. navigate related links and categorise content, then match with user prefs)
     - support save, rate
 [L] Look into how to categorise an article automatically.
