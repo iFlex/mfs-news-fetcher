@@ -153,6 +153,7 @@ class RedditSourcer {
         })
         .catch(function(err){
             LOGGER.error(`Failed to parse reddit ${err}`, err)
+            return null
         });
     }    
 }

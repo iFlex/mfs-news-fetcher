@@ -49,6 +49,7 @@ class WebsiteSourcer {
         })
         .catch(function(err) {
             LOGGER.error(`Failed to parse webpage:(${this.#url}) - ${err}`, err)
+            return null;
         });
     }
 

@@ -25,7 +25,7 @@ function transformer($, node, sorucerDetail) {
         return new ArticleSummary(
             `${sorucerDetail.url}-${title.replaceAll(' ','')}`,         //ID
             sorucerDetail.url,                                          //Source (the reddit page)
-            "tech",                                                     //CATEGORY. ToDo: infer this from content in the future
+            "tech-news",                                                //CATEGORY. ToDo: infer this from content in the future
             title,                                                      //TITLE
             articleUrl,                                                 //URL
             summary,                                                    //Summary

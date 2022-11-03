@@ -27,7 +27,7 @@ class RateLimitedWorker {
             spawnCount -= inFlight
         }
 
-        LOGGER.info(`Exec Delta: ${execDelta} Headroom: ${headroom} SpawnCount: ${spawnCount} InFlight: ${inFlight} QueueSiz: ${queueSize}`)
+        LOGGER.debug(`Exec Delta: ${execDelta} Headroom: ${headroom} SpawnCount: ${spawnCount} InFlight: ${inFlight} QueueSiz: ${queueSize}`)
         
         while( spawnCount > 0 && this.workQueue.length > 0 ) {
             spawnCount--;
@@ -39,14 +39,14 @@ class RateLimitedWorker {
         if(this.workQueue.length > 0){
             this.scheduleStep();
         } else {
-            LOGGER.info("Executor going to sleep until next work comes in");
+            LOGGER.debug("Executor going to sleep until next work comes in");
         }
     }
 
     scheduleStep(override) {
         //wonder if this is gonna create a linked list style mem leak?
         let interval = (override || this.workInterval);
-        LOGGER.info(`Scheduling next step inExecutor ${interval}`)
+        LOGGER.debug(`Scheduling next step inExecutor ${interval}`)
         setTimeout(() => {
             this.step()
         }, interval)
@@ -60,13 +60,13 @@ class RateLimitedWorker {
         .then(result => {
             let end = Date.now();
             delete context.inFlight[workUnit]
-            LOGGER.info(`Work carried out after ${end - start}ms`)
+            LOGGER.debug(`Work carried out after ${end - start}ms`)
             workUnit.resolve(result);
         })
         .catch(ex => {
             let end = Date.now();
             delete context.inFlight[workUnit]
-            LOGGER.info(`Work failed after ${end - start}ms`)
+            LOGGER.debug(`Work failed after ${end - start}ms`)
             workUnit.reject(ex);
         })
     }
@@ -75,7 +75,7 @@ class RateLimitedWorker {
     Returns: a promise for the work unit
     */
     submit(workUnit, context) {
-        LOGGER.info(`Work submitted to Executor(${this.workInterval})`)
+        LOGGER.debug(`Work submitted to Executor(${this.workInterval})`)
         let promiseCtl = {}
         let promise = new Promise(function(resolve, reject){
             promiseCtl['resolve'] = resolve;

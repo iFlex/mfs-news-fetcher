@@ -14,7 +14,7 @@ function filter($, page) {
 }
 
 function transformer($, node, sorucerDetail) {
-    try{
+    try {
         let titleNode = $(node).find('.entry-title').first().find('a').first();
         let title = $(titleNode).text();
         let articleUrl = $(titleNode).attr('href');
@@ -39,6 +39,7 @@ function transformer($, node, sorucerDetail) {
 }
 
 class HackADaySourcer {
+    name = "HackADaySourcer"
 	#url = "https://hackaday.com/blog/";
     #sourcer = null;
 

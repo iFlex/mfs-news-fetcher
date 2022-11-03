@@ -59,11 +59,16 @@ function makeDailyPrezzos() {
         );
     }
 
-    return Promise.all(promises);
+    return Promise.all(promises).catch((ignore) => null);
 }
 
 
-function handleArticle(article){
+function handleArticle(article) {
+    if (!article) {
+        LOGGER.info('Received null article to send over...');
+        return;
+    }
+
     let interestedUsers = userBase.getUsers().filter((user) => {
         return user.isInterested(article) && user.notSeen(article.id)
     }) 
@@ -85,7 +90,7 @@ function handleArticles(articles) {
         return;
     }
 
-    console.log(`Handing ${articles.length} articles`)
+    console.log(`Handling ${articles.length} articles`)
     for (const article of articles) {
         handleArticle(article)
     }
