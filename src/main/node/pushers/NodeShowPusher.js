@@ -2,6 +2,7 @@ const process = require('process')
 const io = require('socket.io-client')
 const https = require('https')
 const LogFactory = require("../logger");
+const { join } = require('path');
 const LOGGER = LogFactory.getLogger("NodeShowPusher");
 
 
@@ -10,6 +11,7 @@ const NODE_SHOW_HOST = process.env.NODE_SHOW_HOST || "localhost"
 const NODE_SHOW_PORT = process.env.NODE_SHOW_PORT || 8080
 const NODE_SHOW_PSK = process.env.NODE_SHOW_PSK
 
+let activePrezzos = new Set()
 let socketIoConfig = {
   extraHeaders: {
     Authorization: `${NODE_SHOW_PSK}`//[TODO]: use real oauth
@@ -46,6 +48,9 @@ LOGGER.info(`Connecting socket.io to ${socketIoURL}`)
 socket = io(socketIoURL, socketIoConfig);
 socket.on("connect_error", (err) => {  
   LOGGER.error(`connect_error due to ${err}`, err);
+});
+socket.on("disconnect", () => {
+  activePrezzos.clear();
 });
 socket.on('error', function(err) {
   LOGGER.error("Error while Socket.IO emit", err)
@@ -101,6 +106,12 @@ function sendInject(pid, parentId, unserialized) {
   unserdata.detail.parentId = parentId
   unserdata.detail.descriptor = unserialized
   
+  if (!activePrezzos.has(pid)) {
+    joinEventStream(pid, () => {
+      activePrezzos.add(pid)
+    });
+  }
+
   //ToDo: make server return a status in the ack object
   return new Promise(function(accept, reject) {
     LOGGER.info(`Sending ${parentId} to ${pid}`);
@@ -128,38 +139,50 @@ function sendArticle(pid, category, title, id, source, data) {
   return sendInject(pid, category, crd);
 }
 
-function joinEventStream(pid) {
+function joinEventStream(pid, callback) {
   LOGGER.info(`Registering for events on ${pid}`)
-  socket.emit("register", {presentationId:pid});
+  socket.emit("register", {presentationId:pid}, (response) => {
+    callback(response);
+  });
 }
 
-function makePresentation(prezOwner, callback) {
+function makePresentation(ownerUser) {
   let httpOps = clone(httpOptions)
-  httpOps.headers.owner = prezOwner
+  httpOps.headers.owner = ownerUser.id
   
-  const req = https.request(httpOps, res => {
-    let body = ''
-    res.on('data', d => {
-      body += d
+  return new Promise(function(accept, reject) {
+    const req = https.request(httpOps, res => {
+      let body = ''
+      res.on('data', d => {
+        body += d
+      })
+
+      res.on('end', function() {
+        LOGGER.info(`Created new News presentation: ${body} for User ${ownerUser.id}`)
+        accept({user:ownerUser, pid: body})
+      })
     })
-  
-    res.on('end', function() {
-      LOGGER.info(`Created new News presentation: ${body}`)
-      joinEventStream(body)
-      callback(body)
+
+    req.on('error', error => {
+      LOGGER.error('Failed to create News presentation', error)
+      reject({user:ownerUser, error: error});
     })
-  })
-  
-  req.on('error', error => {
-    LOGGER.error('Failed to create News presentation', error)
-    callback(null)
-  })
-  req.end()
+    req.end()
+  });
+}
+
+function presentationExists(id) {
+  if (!id) {
+    return false;
+  }
+  //ToDo: implement...
+  return true; 
 }
 
 module.exports = {
     makePresentation: makePresentation,
     makeCathegory: sendCategory,
     sendArticle: sendArticle,
-    setFeedbackCallback: setFeedbackCallback 
+    setFeedbackCallback: setFeedbackCallback,
+    presentationExists: presentationExists 
 }

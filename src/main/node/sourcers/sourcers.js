@@ -17,7 +17,7 @@ class Sourcer {
     this.sourcers = []
     
     LOGGER.info(`Creating sourcers for sources:`)
-    LOGGER.info(sources)
+    LOGGER.info(JSON.stringify(sources))
     for (const item of Object.values(sources)) {
       if (item.type == 'reddit') {
         this.sourcers.push(new RedditSourcer(item.url))

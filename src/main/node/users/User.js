@@ -4,37 +4,40 @@ const LOGGER = LogFactory.getLogger("User");
 class User {
     nodeShowId = null;
     id = null;
-    sources = {}
-    articleStatus = {}
     interests = {
         "categories":[]
     };
 
-    constructor(id, sources) {
+    constructor(id, storage) {
         this.id = id
-        for (const source of sources) {
-            this.sources[source.url] = source
+        this.storage = storage;
+        this.state = this.storage.get(this.id)
+        this.state['articleStatus'] = {}
+
+        for (const source of this.state.sources) {
+            //this.sources[source.url] = source
             if (source.categories) {
                 this.interests["categories"] = this.interests["categories"].concat(source.categories);
             }
         }
     }
-
+    
     setNodeShowId(id) {
-        this.nodeShowId = id
+        this.state.nodeShowId = id;
+        this.storage.put(this.id, this.state);
     }
 
     getNodeShowId() {
-        return this.nodeShowId
+        return this.state.nodeShowId
     }
 
     getSources() {
-        return Object.values(this.sources)
+        return Object.values(this.state.sources)
     }
 
     //currently very crude matching of interests, no sorting
     isInterested(article) {
-        if (article.source in this.sources) {
+        if (article.source in this.state.sources) {
             return true;
         }
         if (this.interests["categories"].includes(article.category)) {
@@ -45,26 +48,28 @@ class User {
 
     notSeen(artId) {
         //ToDo implement persisted storage
-        return !this.articleStatus[artId];
+        return !this.state.articleStatus[artId];
     }
 
     markSeen(artId) {
         //ToDo implement persisted storage
         LOGGER.debug(`${this.id} has seen ${artId}`)
-        this.articleStatus[artId] = {id: artId, opened:false, rating:0}
+        this.state.articleStatus[artId] = {id: artId, opened:false, rating:0}
+        this.storage.put(this.id, this.state);
     }
 
     markOpened(artId) {
         //ToDo implement persisted storage
         LOGGER.debug(`${this.id} has open ${artId}`)
-        let articleStatus = this.articleStatus[artId];
+        let articleStatus = this.state.articleStatus[artId];
         if (!articleStatus) {
             articleStatus = {id: artId, opened:false, rating:0}
-            this.articleStatus[artId] = articleStatus
+            this.state.articleStatus[artId] = articleStatus
 
             LOGGER.error(`Article ${artId} status absent for ${this.id} when trying to mark as open. Populating...`)
         }
         articleStatus.opened = true;
+        this.storage.put(this.id, this.state);
     }
 
     static fromJson(userInfo) {

@@ -1,12 +1,12 @@
+const FolderKeyFileStorage = require('./storage/FolderKeyValueStorage')
 const UserBase = require("./users/UserBase")
 const Sourcers = require("./sourcers/sourcers")
 const Notifier = require("./pushers/NodeShowPusher")
 const LogFactory = require("./logger");
 const LOGGER = LogFactory.getLogger("feed");
 
-const sourcers = new Sourcers(UserBase.getAllSources())
-const userIdToPrezzoId = {}
-let categoryPerPrezzo = {}
+const userBase = new UserBase(new FolderKeyFileStorage(process.env.USER_BASE || "../../resources/users/"));
+const sourcers = new Sourcers(userBase.getAllSources())
 
 Notifier.setFeedbackCallback(handleUserInteractionFeedback, this);
 
@@ -22,7 +22,7 @@ function handleUserInteractionFeedback(data) {
 
     let prezzoId = data.presentationId;
     let userId = prezzoIdToUserId(prezzoId);
-    let user = UserBase.getUser(userId);
+    let user = userBase.getUser(userId);
     if (user) {
         user.markOpened(data.detail.id);
     }
@@ -30,51 +30,48 @@ function handleUserInteractionFeedback(data) {
 }
 
 function prezzoIdToUserId(pid) {
-    for (const [userId, prezId] of Object.entries(userIdToPrezzoId)) {
-        if (prezId === pid) {
-            return userId;
+    const users = userBase.getUsers()
+    for (const user of users) {
+        if (user.getNodeShowId() === pid) {
+            return user.id;
         }
     }
     return null;
 }
 
-function makeDailyPrezzos(onReady) {
-    const users = UserBase.getUsers()
-    const numUsers = users.length
-    categoryPerPrezzo = {}
-
-    let createdPrezzos = 0;
+function makeDailyPrezzos() {
+    const users = userBase.getUsers()
+    
+    let promises = []
     for (const user of users) {
-        LOGGER.info(`Making new prezzo for ${user.id}`)
-        Notifier.makePresentation(user.id, (id) => {
-            if(id) {
-                user.setNodeShowId(id)
-                userIdToPrezzoId[user.id] = id
-                categoryPerPrezzo[id] = {}
-            }
+        //ToDo make presentationExists a promise as well and chain with create conditionally
+        let exists = Notifier.presentationExists(user.getNodeShowId())
+        if (exists) {
+            LOGGER.info(`${user.id} has existing prezzo ${user.getNodeShowId()}`)
+            continue;
+        }
 
-            createdPrezzos++;
-            if(createdPrezzos == numUsers) {
-                onReady.apply()
-            }
-        })
+        LOGGER.info(`Making new prezzo for ${user.id}`)
+        promises.push(
+            Notifier.makePresentation(user).then((result) => {
+                result.user.setNodeShowId(result.pid);
+            })
+        );
     }
+
+    return Promise.all(promises);
 }
 
 
 function handleArticle(article){
-    let interestedUsers = UserBase.getUsers().filter((user) => {
+    let interestedUsers = userBase.getUsers().filter((user) => {
         return user.isInterested(article) && user.notSeen(article.id)
     }) 
 
     for (const user of interestedUsers) {
         let pid = user.getNodeShowId()
-        if ((pid in categoryPerPrezzo) && !(article.category in categoryPerPrezzo[pid])) {
-            LOGGER.info(`Making category ${article.category} in prezzo ${pid}`)
-            Notifier.makeCathegory(pid, article.category)
-            categoryPerPrezzo[pid][article.category] = true
-        }
-        
+        //ToDo: make category if nodeshow fails to accept article because of lack of parent category
+        Notifier.makeCathegory(pid, article.category)
         LOGGER.info(`Sending article ${article.category} to ${pid}`)
         Notifier.sendArticle(pid, article.category, article.title, article.id, article.source, article.html()).then((result) =>{
             user.markSeen(article.id);
@@ -88,34 +85,24 @@ function handleArticles(articles) {
         return;
     }
 
+    console.log(`Handing ${articles.length} articles`)
     for (const article of articles) {
         handleArticle(article)
     }
 }
 
-function userToPrezzoId(userId){
-    return userIdToPrezzoId[userId]
-}
-
-let hourDelta = 1000*60*60
-let lastTime = null
-
 function processStep() {
-    let nw = new Date(Date.now())
-    nw.setHours(0,0,0,0)
-
-    if (!lastTime || nw > lastTime) {
-        lastTime = nw;
-        makeDailyPrezzos((e) => {
-            LOGGER.info(`Fetching all articles articles`)
-            sourcers.fetch(handleArticles)
-        })
-    } else {
-        LOGGER.info(`Refreshing all articles articles`)
+    LOGGER.info("Refreshing news feed...");
+    
+    makeDailyPrezzos().then((e) => {
+        LOGGER.info(`dailyPrezzoResult: ${JSON.stringify(e)}`)
+        LOGGER.info(`Fetching all articles articles`)
         sourcers.fetch(handleArticles)
-    }
+    });
+
     LOGGER.info("Snoozing for another hour")
 }
 
-processStep();
+let hourDelta = 1000*60*60
 setInterval(processStep, hourDelta)
+processStep();

@@ -15,7 +15,7 @@ function getLogger(component) {
             timestamp(),
             logFormat
         ),
-        defaultMeta: { service: 'user-service' },
+        defaultMeta: { service: component },
         transports: [
             new transports.File({ filename: `${LOG_LOCATION_BASE}error.log`, level: 'error' }),
             new transports.File({ filename: `${LOG_LOCATION_BASE}combined.log` }),

@@ -1,35 +1,28 @@
-const fs = require('fs')
 const process = require('process')
 const User = require('./User')
 const LogFactory = require("../logger");
 const LOGGER = LogFactory.getLogger("UserBase");
 
 class UserBase {
-    constructor(usersPath) { 
-        this.usersPath = usersPath
+    constructor(storage) { 
+        this.storage = storage
         this.users = {}
         this.allSources = {}
 
-        this.init()
+        this.update()
     }
 
-    init() {
-        let files = []
-        try {
-            files = fs.readdirSync(this.usersPath);
-        } catch(e) {
-            LOGGER.error("Error parsing UserBase", e)
-        }
-
-        for(let file of files) {
-            let path = this.usersPath+"/"+file
+    update() {
+        let userPaths = this.storage.list()
+        this.users = {}
+        this.allSources = {}
+        for (const path of userPaths) {
             try {
-                let data = fs.readFileSync(path)
-                let user = User.fromJson(data)
-                this.users[user.id] = user
+                let user = new User(path, this.storage)
+                this.users[user.id] = user;
                 this.addSourcesToSet(user.getSources())
             } catch (e) {
-                LOGGER.error(`Failed to process user file: ${path} - ${e}`, e)
+                LOGGER.error(`Failed to load in user ${path}`, e)
             }
         }
     }
@@ -57,4 +50,4 @@ class UserBase {
     }
  }
 
- module.exports = new UserBase(process.env.USER_BASE || "../../resources/users/");
+ module.exports = UserBase;
