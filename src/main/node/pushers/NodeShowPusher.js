@@ -104,6 +104,7 @@ function sendInject(pid, parentId, unserialized) {
   unserdata.presentationId = pid
   unserdata.parentId = parentId
   unserdata.detail.parentId = parentId
+  unserdata.detail.insertAtIndex = 0
   unserdata.detail.descriptor = unserialized
   
   if (!activePrezzos.has(pid)) {

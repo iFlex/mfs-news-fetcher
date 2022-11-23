@@ -18,6 +18,9 @@ DONE
 [S] - Store presentation with User => ability to fetch associated presentation on restart and not have to create a new one all the time
         - make sure that system works even if NodeShow fails (it should pick up after it comes back around)
 [M] - Integrate persistence for user state (including Articles delivered, opened and rated)
+      - NodeShow doesn't fully support event streams, so it doesn't keep a history of events when a subscriber is not connected.
+      - Curently a best effort approach
+      
 [M] - Ability to swap categories around in the UI (Needs NodeShow support)
 [M] - Ability to read Authors
 [M] - Ability to read tags from article
