@@ -109,13 +109,14 @@ function sendInject(pid, parentId, unserialized) {
   
   if (!activePrezzos.has(pid)) {
     joinEventStream(pid, () => {
+      console.log(`Event stream joined for ${pid}`)
       activePrezzos.add(pid)
     });
   }
 
   //ToDo: make server return a status in the ack object
   return new Promise(function(accept, reject) {
-    LOGGER.info(`Sending ${parentId} to ${pid}`);
+    LOGGER.info(`Sending ${parentId} to ${pid} - with ${unserdata}`);
     socket.emit('update', unserdata, (cb) => {
       accept(cb);
     });    
@@ -142,7 +143,8 @@ function sendArticle(pid, category, title, id, source, data) {
 
 function joinEventStream(pid, callback) {
   LOGGER.info(`Registering for events on ${pid}`)
-  socket.emit("register", {presentationId:pid}, (response) => {
+  socket.emit("register", {presentationId:pid, bulkLoad:false}, (response) => {
+    console.log(`Socket.IO Callback ${response}`);
     callback(response);
   });
 }
